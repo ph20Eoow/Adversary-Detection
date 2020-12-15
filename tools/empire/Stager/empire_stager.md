@@ -1,7 +1,13 @@
-# Empire-Windows-Launcher-Bat
+# Empire-Stager-Windows
+## Metadata
+|                |                    |
+| -------------- | ------------------ |
+| Author         | Tony Lee @ph20Eoow |
+| Createion Date | 2020/12/15         |
 
-## DataSet Description 
-The adversary  might used empire' launcher_bat stager to execute code in the environment. This attack example can be leveraged by attackers in a physical way, such as rubber ducky.
+
+## Hypothesis
+The adversary  might used empire' launcher_bat stager to execute code in the environment. This attack example can be leveraged by attackers in a physical way, such as rubber ducky. On the other hand, the empire stager offers an option to pack the payload in different ways which makes the other stagers behavior identical, such as multi/launcher, windows/hta, etc
 
 ## Simulation Plan
 | Environment | Tool Type | Module                      |
@@ -55,6 +61,7 @@ Options:
 [*] Sending agent (stage 2) to R1SHUP8X at 192.168.254.56
 
 ```
+
 # Explore Dataset
 ## Adversary Behavior I
 
@@ -145,3 +152,4 @@ None
 
 ## False Positives
 None
+
