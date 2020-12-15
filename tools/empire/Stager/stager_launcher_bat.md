@@ -1,22 +1,62 @@
-# Empire Stager
+# Empire-Windows-Launcher-Bat
 
-## Hypothesis 
-The adversary used empire' launcher_bat stager to execute code in the environment. This attack example can be leveraged by attackers in a physical way, such as rubber ducky.
+## DataSet Description 
+The adversary  might used empire' launcher_bat stager to execute code in the environment. This attack example can be leveraged by attackers in a physical way, such as rubber ducky.
 
-## Technical Context
-None
+## Simulation Plan
+| Environment | Tool Type | Module                      |
+| ----------- | --------- | --------------------------- |
+| WIN10       | C2        | empire:windows/launcher_bat |
 
-## Analytics
-#### Payload Generation
 ```bash
 (Empire) > usestager windows/launcher_bat
+(Empire: stager/windows/launcher_bat) > info
+Name: BAT Launcher
+Description:
+  Generates a self-deleting .bat launcher for Empire.
+Options:
+  Name             Required    Value             Description
+  ----             --------    -------           -----------
+  Listener         True                          Listener to generate stager for.
+  Language         True        powershell        Language of the stager to generate.
+  StagerRetries    False       0                 Times for the stager to retry
+                                                 connecting.
+  OutFile          False       /tmp/launcher.bat File to output .bat launcher to,
+                                                 otherwise displayed on the screen.
+  Delete           False       True              Switch. Delete .bat after running.
+  Obfuscate        False       False             Switch. Obfuscate the launcher
+                                                 powershell code, uses the
+                                                 ObfuscateCommand for obfuscation types.
+                                                 For powershell only. 
+  ObfuscateCommand False       Token\All\1       The Invoke-Obfuscation command to use.
+                                                 Only used if Obfuscate switch is True.
+                                                 For powershell only. 
+  UserAgent        False       default           User-agent string to use for the staging
+                                                 request (default, none, or other).
+  Proxy            False       default           Proxy to use for request (default, none,
+                                                 or other).
+  ProxyCreds       False       default           Proxy credentials
+                                                 ([domain\]username:password) to use for
+                                                 request (default, none, or other).
+  AMSIBypass       False       True              Include mattifestation's AMSI Bypass in
+                                                 the stager code.
+  AMSIBypass2      False       False             Include Tal Liberman's AMSI Bypass in
+                                                 the stager code.
+
+
+(Empire: stager/windows/launcher_bat) > set Listener http
+(Empire: stager/windows/launcher_bat) > execute
+[*] Stager output written out to: /tmp/launcher.bat
+
+(Empire: stager/windows/launcher_bat) > 
+[*] Sending POWERSHELL stager (stage 1) to 192.168.254.56
+[*] New agent R1SHUP8X checked in
+[+] Initial agent R1SHUP8X from 192.168.254.56 now active (Slack)
+[*] Sending agent (stage 2) to R1SHUP8X at 192.168.254.56
+
 ```
-
-#### Behavior Summary
-1. Generate the .bat payload
-2. User click the .bat file, in reality it can be executed by autorun.inf
-
-## Analytic I
+# Explore Dataset
+## Adversary Behavior I
 
 | Field                | Value                                                                     |
 | -------------------- | ------------------------------------------------------------------------- |
@@ -27,52 +67,7 @@ None
 | Process_Command_Line | C:\Windows\system32\cmd.exe /c ""C:\Users\vagrant\Downloads\launcher.bat" |
 | TaskCatergory        | Process Creation                                                          |
 
-```xml
-12/15/2020 04:09:20 AM
-LogName=Security
-EventCode=4688
-EventType=0
-ComputerName=win10.windomain.local
-SourceName=Microsoft Windows security auditing.
-Type=Information
-RecordNumber=1132967
-Keywords=Audit Success
-TaskCategory=Process Creation
-OpCode=Info
-Message=A new process has been created.
-
-Creator Subject:
-	Security ID:		S-1-5-21-3681719425-3201420387-1996724379-1000
-	Account Name:		vagrant
-	Account Domain:		WIN10
-	Logon ID:		0x43784F
-
-Target Subject:
-	Security ID:		S-1-0-0
-	Account Name:		-
-	Account Domain:		-
-	Logon ID:		0x0
-
-Process Information:
-	New Process ID:		0x1374
-	New Process Name:	C:\Windows\System32\cmd.exe
-	Token Elevation Type:	%%1936
-	Mandatory Label:		S-1-16-12288
-	Creator Process ID:	0xc08
-	Creator Process Name:	C:\Windows\explorer.exe
-	Process Command Line:	C:\Windows\system32\cmd.exe /c ""C:\Users\vagrant\Downloads\launcher.bat" "
-
-Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
-
-Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
-
-Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
-
-Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
-```
-
-## Analytic II
-
+## Adversary Behavior II
 | Field                | Value                                                                                                                                                     |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LogName              | Security                                                                                                                                                  |
@@ -84,92 +79,16 @@ Type 3 is a limited token with administrative privileges removed and administrat
 |                      |
 | TaskCatergory        | Process Creation                                                                                                                                          |
 
-```xml
-12/15/2020 04:09:20 AM
-LogName=Security
-EventCode=4688
-EventType=0
-ComputerName=win10.windomain.local
-SourceName=Microsoft Windows security auditing.
-Type=Information
-RecordNumber=1132969
-Keywords=Audit Success
-TaskCategory=Process Creation
-OpCode=Info
-Message=A new process has been created.
+## Adversary Behavior III
 
-Creator Subject:
-	Security ID:		S-1-5-21-3681719425-3201420387-1996724379-1000
-	Account Name:		vagrant
-	Account Domain:		WIN10
-	Logon ID:		0x43784F
+| Field        | Value                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| LogName      | Windows PowerShell                                                                                                      |
+| EventCode    | 400                                                                                                                     |
+| Message      | *HostApplication=C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noP -sta -w 1 -enc //5112 bytes payload// * |
+| TaskCategory | Engine Lifecycle                                                                                                        |
 
-Target Subject:
-	Security ID:		S-1-0-0
-	Account Name:		-
-	Account Domain:		-
-	Logon ID:		0x0
-
-Process Information:
-	New Process ID:		0x25f4
-	New Process Name:	C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-	Token Elevation Type:	%%1936
-	Mandatory Label:		S-1-16-12288
-	Creator Process ID:	0x1374
-	Creator Process Name:	C:\Windows\System32\cmd.exe
-	Process Command Line:	"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  -nol -nop -ep bypass "[IO.File]::ReadAllText('C:\Users\vagrant\Downloads\launcher.bat')|iex" 
-
-Token Elevation Type indicates the type of token that was assigned to the new process in accordance with User Account Control policy.
-
-Type 1 is a full token with no privileges removed or groups disabled.  A full token is only used if User Account Control is disabled or if the user is the built-in Administrator account or a service account.
-
-Type 2 is an elevated token with no privileges removed or groups disabled.  An elevated token is used when User Account Control is enabled and the user chooses to start the program using Run as administrator.  An elevated token is also used when an application is configured to always require administrative privilege or to always require maximum privilege, and the user is a member of the Administrators group.
-
-Type 3 is a limited token with administrative privileges removed and administrative groups disabled.  The limited token is used when User Account Control is enabled, the application does not require administrative privilege, and the user does not choose to start the program using Run as administrator.
-```
-## Analytic III
-
-| Field        | Value              |
-| ------------ | ------------------ |
-| LogName      | Windows PowerShell |
-| EventCode    | 600                |
-| TaskCategory | Provider Lifecycle |
-
-```xml
-12/15/2020 04:09:22 AM
-LogName=Windows PowerShell
-EventCode=600
-EventType=4
-ComputerName=win10.windomain.local
-SourceName=PowerShell
-Type=Information
-RecordNumber=543858
-Keywords=Classic
-TaskCategory=Provider Lifecycle
-OpCode=Info
-Message=Provider "Registry" is Started. 
-
-Details: 
-	ProviderName=Registry
-	NewProviderState=Started
-
-	SequenceNumber=1
-
-	HostName=ConsoleHost
-	HostVersion=5.1.18362.1
-	HostId=9502c33c-d708-4005-9ab5-88185e65817e
-	HostApplication=C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -nol -nop -ep bypass [IO.File]::ReadAllText('C:\Users\vagrant\Downloads\launcher.bat')|iex
-	EngineVersion=
-	RunspaceId=
-	PipelineId=
-	CommandName=
-	CommandType=
-	ScriptName=
-	CommandPath=
-	CommandLine=
-```
-
-## Analytic IV
+## Adversary Behavior IV
 
 | Field             | Value                                                                                                                                                      |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -184,47 +103,8 @@ Details:
 | ParentCommandLine | "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  -nol -nop -ep bypass "[IO.File]::ReadAllText('C:\Users\vagrant\Downloads\launcher.bat')\|iex" |
 | ProcessGuid       | {bac4bdbc-36f2-5fd8-570d-000000000700}                                                                                                                     |
 
-```xml
-12/15/2020 04:09:22 AM
-LogName=Microsoft-Windows-Sysmon/Operational
-EventCode=1
-EventType=4
-ComputerName=win10.windomain.local
-User=NOT_TRANSLATED
-Sid=S-1-5-18
-SidType=0
-SourceName=Microsoft-Windows-Sysmon
-Type=Information
-RecordNumber=165472
-Keywords=None
-TaskCategory=Process Create (rule: ProcessCreate)
-OpCode=Info
-Message=Process Create:
-RuleName: technique_id=T1059.001,technique_name=PowerShell
-UtcTime: 2020-12-15 04:09:22.513
-ProcessGuid: {bac4bdbc-36f2-5fd8-570d-000000000700}
-ProcessId: 3988
-Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-FileVersion: 10.0.18362.1 (WinBuild.160101.0800)
-Description: Windows PowerShell
-Product: Microsoft® Windows® Operating System
-Company: Microsoft Corporation
-OriginalFileName: PowerShell.EXE
-CommandLine: "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -noP -sta -w 1 -enc //5112 byte payload//
-CurrentDirectory: C:\Users\vagrant\Downloads\
-User: WIN10\vagrant
-LogonGuid: {bac4bdbc-151b-5fd5-4f78-430000000000}
-LogonId: 0x43784F
-TerminalSessionId: 2
-IntegrityLevel: High
-Hashes: SHA1=36C5D12033B2EAF251BAE61C00690FFB17FDDC87,MD5=CDA48FC75952AD12D99E526D0B6BF70A,SHA256=908B64B1971A979C7E3E8CE4621945CBA84854CB98D76367B791A6E22B5F6D53,IMPHASH=A7CEFACDDA74B13CD330390769752481
-ParentProcessGuid: {bac4bdbc-36f0-5fd8-560d-000000000700}
-ParentProcessId: 9716
-ParentImage: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-ParentCommandLine: "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  -nol -nop -ep bypass "[IO.File]::ReadAllText('C:\Users\vagrant\Downloads\launcher.bat')|iex"
-```
 
-## Analytic V
+## Adversary Behavior V
 | Field        | Value                                                     |
 | ------------ | --------------------------------------------------------- |
 | LogName      | Microsoft-Windows-Sysmon/Operational                      |
@@ -234,84 +114,32 @@ ParentCommandLine: "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"  
 | ImageLoaded  | C:\Windows\System32\wbem\wmiutils.dll                     |
 | TaskCategory | Image loaded (rule: ImageLoad)                            |
 
-```xml
-12/15/2020 04:09:23 AM
-LogName=Microsoft-Windows-Sysmon/Operational
-EventCode=7
-EventType=4
-ComputerName=win10.windomain.local
-User=NOT_TRANSLATED
-Sid=S-1-5-18
-SidType=0
-SourceName=Microsoft-Windows-Sysmon
-Type=Information
-RecordNumber=165481
-Keywords=None
-TaskCategory=Image loaded (rule: ImageLoad)
-OpCode=Info
-Message=Image loaded:
-RuleName: technique_id=T1047,technique_name=Windows Management Instrumentation
-UtcTime: 2020-12-15 04:09:23.551
-ProcessGuid: {bac4bdbc-36f2-5fd8-570d-000000000700}
-ProcessId: 3988
-Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-ImageLoaded: C:\Windows\System32\wbem\wmiutils.dll
-FileVersion: 10.0.18362.1 (WinBuild.160101.0800)
-Description: WMI
-Product: Microsoft® Windows® Operating System
-Company: Microsoft Corporation
-OriginalFileName: wmiutils.dll
-Hashes: SHA1=BC609D0AE8E4D79DC586A784DA6E660C25411BAE,MD5=9639A13D44802D3060BAB0072EB7945A,SHA256=45446583DDBD1DA38B545603AF62E305F13DD480B09F4A689BE4ADC98BC4A4AF,IMPHASH=0D31E6D27B954AD879CB4DF742982F1A
-Signed: true
-Signature: Microsoft Windows
-SignatureStatus: Valid
-```
 
-## Analytic VI
-| Field           | Value                                              |
-| --------------- | -------------------------------------------------- |
-| LogName         | Microsoft-Windows-Sysmon/Operational               |
-| EventCode       | 3                                                  |
-| ProcessId       | 3988                                               |
-| DestinationIp   | <C2 IP>                                            |
-| DestinationPort | 80                                                 |
-| TaskCategory    | Network connection detected (rule: NetworkConnect) |
+## Adversary Behavior VI
+You can look for Powershell connected to C2
+| Field           | Value                                                     |
+| --------------- | --------------------------------------------------------- |
+| LogName         | Microsoft-Windows-Sysmon/Operational                      |
+| EventCode       | 3                                                         |
+| ProcessId       | 3988                                                      |
+| Image           | C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe |
+| DestinationIp   | <C2 IP>                                                   |
+| DestinationPort | 80                                                        |
+| TaskCategory    | Network connection detected (rule: NetworkConnect)        |
 
-```xml
-12/15/2020 04:09:24 AM
-LogName=Microsoft-Windows-Sysmon/Operational
-EventCode=3
-EventType=4
-ComputerName=win10.windomain.local
-User=NOT_TRANSLATED
-Sid=S-1-5-18
-SidType=0
-SourceName=Microsoft-Windows-Sysmon
-Type=Information
-RecordNumber=165482
-Keywords=None
-TaskCategory=Network connection detected (rule: NetworkConnect)
-OpCode=Info
-Message=Network connection detected:
-RuleName: technique_id=T1059.001,technique_name=PowerShell
-UtcTime: 2020-12-15 12:06:32.677
-ProcessGuid: {bac4bdbc-36f2-5fd8-570d-000000000700}
-ProcessId: 3988
-Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-User: WIN10\vagrant
-Protocol: tcp
-Initiated: true
-SourceIsIpv6: false
-SourceIp: 192.168.254.56
-SourceHostname: -
-SourcePort: 49581
-SourcePortName: -
-DestinationIsIpv6: false
-DestinationIp: 192.168.254.46
-DestinationHostname: -
-DestinationPort: 80
-DestinationPortName: -
-```
+
+## Adversary Behavior VII
+Since the C2 connection has established, You can look for Powershell Pipeline Execution Details which invoked "Get-Random" with a few of URL request to pretend normal web traffic
+| Field                        | Value                                          |
+| ---------------------------- | ---------------------------------------------- |
+| LogName                      | Windows PowerShell                             |
+| EventCode                    | 800                                            |
+| ParameterBinding_Get_Random_ | name="InputObject"; value="/admin/get.php"     |
+|                              | name="InputObject"; value="/news.php"          |
+|                              | name="InputObject"; value="/login/process.php" |
+| TaskCategory                 | Pipeline Execution Details                     |
+
+
 ## Known Bypasses
 None
 
